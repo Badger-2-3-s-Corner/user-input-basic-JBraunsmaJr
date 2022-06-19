@@ -27,8 +27,8 @@ jobs:
          pip install pytest
          pip install -r requirements.txt
 
-      - name: Permissions
+      - name: PyTest
         run: |
          chmod -R 755 .
-
-      - uses: education/autograding@v1
+         sudo -H pip3 install pytest
+         pytest
