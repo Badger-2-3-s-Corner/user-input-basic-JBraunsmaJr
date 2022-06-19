@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Checksum",
+      "setup": "",
+      "run": "sha512sum .github/workflows/classroom.yml",
+      "input": "",
+      "output": "6de2142954889afa103e722de62f8c66269fc3b8ec898c9d53f1ee1effe577d4ce099d1aebd4e61caa79cb570d1512852d77dacbcfea9840ffe938d80789918a",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    }
+  ]
+}
