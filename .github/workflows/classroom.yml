@@ -1,16 +1,46 @@
-name: GitHub Classroom Workflow
-
-on: [push]
-
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
 permissions:
   checks: write
   actions: read
   contents: read
-
 jobs:
-  build:
-    name: Autograding
+  run-autograding-tests:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
     steps:
-      - uses: actions/checkout@v2
-      - uses: education/autograding@v1
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Checksum Classroom
+      id: checksum-classroom
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Checksum Classroom
+        setup-command: ''
+        command: sha512sum .github/workflows/classroom.yml
+        input: ''
+        expected-output: 6de2142954889afa103e722de62f8c66269fc3b8ec898c9d53f1ee1effe577d4ce099d1aebd4e61caa79cb570d1512852d77dacbcfea9840ffe938d80789918a
+        comparison-method: regex
+        timeout: 10
+        max-score: 10
+    - name: Checksum External
+      id: checksum-external
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Checksum External
+        setup-command: ''
+        command: sha512sum .github/workflows/external.yml
+        input: ''
+        expected-output: 272bd2a0d06754e0bf45977bbd1a5a999da6e53ed3bcac99ac292334a467f225834f31964a090d212c74d8527161873974c3e1dd3507f2aed21544123a7fcbc6
+        comparison-method: regex
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CHECKSUM-CLASSROOM_RESULTS: "${{steps.checksum-classroom.outputs.result}}"
+        CHECKSUM-EXTERNAL_RESULTS: "${{steps.checksum-external.outputs.result}}"
+      with:
+        runners: checksum-classroom,checksum-external
